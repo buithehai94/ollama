@@ -10,9 +10,6 @@ RUN apt-get update && apt-get install -y curl
 # Install Ollama directly using the curl command
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-# Pull the model(s) you want to use (e.g., "llama")
-RUN ollama pull llama
-
 # Copy the requirements file to the container
 COPY requirements.txt /api/
 
