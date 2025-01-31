@@ -16,6 +16,9 @@ WORKDIR $APP_HOME
 COPY ./api ./api
 COPY ./requirements.txt ./
 
+# If you need to install Ollama dependencies, run the script
+RUN bash /api/ollama_install.sh
+
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
