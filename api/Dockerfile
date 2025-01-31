@@ -23,4 +23,4 @@ COPY api /api
 EXPOSE 8000
 
 # Command to run FastAPI with Uvicorn, but also pull the model first
-CMD ["sh", "-c", "ollama pull mistral && uvicorn api:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "ollama pull llama && uvicorn api:app --host 0.0.0.0 --port 8000"]
