@@ -15,14 +15,16 @@ WORKDIR $APP_HOME
 
 # Copy the application files (the 'api' directory and other necessary files)
 COPY ./api ./api
-COPY ./ollama_install.sh ./
+COPY ./api/ollama_install.sh ./
+
+# Copy requirements.txt from the root folder
+COPY ./requirements.txt ./requirements.txt
 
 # Ensure ollama_install.sh is executable and run it
-RUN chmod +x /api/ollama_install.sh && /api/ollama_install.sh  # Adjust the path to match the working directory
+RUN chmod +x ./ollama_install.sh && ./ollama_install.sh
 
 # Install Python dependencies from requirements.txt
-COPY ./requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
 
 # Install Uvicorn with standard extras (for production use)
 RUN pip install --no-cache-dir uvicorn[standard]
