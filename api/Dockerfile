@@ -5,9 +5,7 @@ FROM python:3.11-slim AS base
 RUN apt-get update -y && apt-get install -y \
     build-essential \
     libpq-dev \
-    curl && \  # ✅ No trailing backslash after last item
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    curl && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set environment variable for the app directory
 ENV APP_HOME=/api
@@ -16,7 +14,7 @@ WORKDIR $APP_HOME
 # Copy the application files (the 'api' directory and other necessary files)
 COPY ./api ./api
 COPY ./requirements.txt ./
-COPY ./api/ollama_install.sh ./  # ✅ Ensure script is copied correctly
+COPY ./api/ollama_install.sh ./  # Ensure script is copied correctly
 
 # Ensure ollama_install.sh is executable and run it
 RUN chmod +x ollama_install.sh && ./ollama_install.sh
