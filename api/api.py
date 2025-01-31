@@ -1,27 +1,19 @@
-from fastapi import FastAPI
-import subprocess
-import os
+import requests
+
+from fastapi import FastAPI, Response
 
 app = FastAPI()
 
-@app.get("/")
-async def root():
-    return {"message": "Hello, FastAPI with Ollama!"}
+@app.get('/')
+def home():
+    return {"Chat" : "Bot"}
 
-@app.get("/chat/")
-async def chat(prompt: str):
-    # Construct the command to run Ollama with the given prompt
-    command = f"ollama run llama --text \"{prompt}\""
+@app.get('/ask')
+def ask(prompt :str):
+    res = requests.post('http://ollama:11434/api/generate', json={
+        "prompt": prompt,
+        "stream" : False,
+        "model" : "llama3"
+    })
 
-    try:
-        # Run the Ollama command and capture the output
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-
-        # Check if the command was successful
-        if result.returncode == 0:
-            # Return the response from Ollama (stdout contains the output)
-            return {"response": result.stdout.strip()}
-        else:
-            return {"error": "Failed to generate response", "status_code": result.returncode, "stderr": result.stderr}
-    except Exception as e:
-        return {"error": str(e)}
+    return Response(content=res.text, media_type="application/json")
