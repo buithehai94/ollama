@@ -22,5 +22,5 @@ COPY api /api
 # Expose the FastAPI default port
 EXPOSE 8000
 
-# Command to run FastAPI with Uvicorn
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to run FastAPI with Uvicorn, but also pull the model first
+CMD ["sh", "-c", "ollama pull mistral && uvicorn api:app --host 0.0.0.0 --port 8000"]
