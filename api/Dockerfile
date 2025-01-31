@@ -15,15 +15,13 @@ WORKDIR $APP_HOME
 # Copy the application files (the 'api' directory and other necessary files)
 COPY ./api ./api
 COPY ./requirements.txt ./
+COPY ./ollama_install.sh ./  # Copy ollama_install.sh to root of container
 
-# If you need to install Ollama dependencies, run the script
-RUN bash /api/ollama_install.sh
+# Ensure ollama_install.sh is executable and run it
+RUN chmod +x ollama_install.sh && ./ollama_install.sh
 
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Install Uvicorn with standard extras (for production use)
-RUN pip install --no-cache-dir uvicorn[standard]
 
 # Expose port 8000 to be accessed from outside the container
 EXPOSE 8000
