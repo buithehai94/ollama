@@ -13,12 +13,14 @@ COPY ollama_install.sh /tmp/ollama_install.sh
 # Run the script to install Ollama
 RUN bash /tmp/ollama_install.sh
 
-# Copy requirements file to the container and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the requirements file from the root of your project to the container
+COPY requirements.txt /api/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r /api/requirements.txt
 
 # Copy all files from the 'api' folder into the container's /api folder
-COPY . .
+COPY api /api
 
 # Expose the FastAPI default port
 EXPOSE 8000
