@@ -11,19 +11,17 @@ RUN apt-get update -y && apt-get install -y \
 ENV APP_HOME=/api
 WORKDIR $APP_HOME
 
-# Copy the application files (the 'api' directory and other necessary files)
-COPY ./api ./api
-COPY ./requirements.txt ./
-COPY ./api/ollama_install.sh ./  
+# Copy application files
+COPY . .  # Copy everything inside `api/`
 
 # Ensure ollama_install.sh is executable and run it
 RUN chmod +x ollama_install.sh && ./ollama_install.sh
 
-# Install Python dependencies from requirements.txt
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port 8000 to be accessed from outside the container
+# Expose port 8000
 EXPOSE 8000
 
 # Run the FastAPI app with Uvicorn
-CMD ["uvicorn", "api.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
