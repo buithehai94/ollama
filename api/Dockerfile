@@ -1,23 +1,23 @@
 # Use an official Python image
 FROM python:3.10
 
-# Set the working directory inside the container (set it to /app)
-WORKDIR /app
+# Set the working directory inside the container to /api
+WORKDIR /api
 
 # Install system dependencies (curl is required to install Ollama)
 RUN apt-get update && apt-get install -y curl
 
 # Copy Ollama installation script from the local machine to the container
-COPY ../ollama_install.sh /tmp/ollama_install.sh
+COPY ollama_install.sh /tmp/ollama_install.sh
 
 # Run the script to install Ollama
 RUN bash /tmp/ollama_install.sh
 
 # Copy requirements file to the container and install dependencies
-COPY ../requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all files from the local 'api' folder into the container
+# Copy all files from the 'api' folder into the container's /api folder
 COPY . .
 
 # Expose the FastAPI default port
