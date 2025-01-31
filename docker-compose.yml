@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest  # This uses the official Ollama image
+    container_name: ollama
+    ports:
+      - "11434:11434"  # Exposing Ollama API port
+    command: ["ollama", "start"]  # This starts Ollama as a service
+    volumes:
+      - ollama_data:/root/.ollama  # Persist model data if needed
+  
+  fastapi:
+    build: .
+    container_name: fastapi
+    ports:
+      - "8000:8000"  # Exposing FastAPI app on port 8000
+    depends_on:
+      - ollama  # Ensure Ollama is running before starting FastAPI
+    environment:
+      - OLLAMA_API_URL=http://ollama:11434/v1/chat/completions  # Ollama's API URL
+    volumes:
+      - .:/api  # Mount the current directory to `/api` inside the container
+
+volumes:
+  ollama_data:  # Persistent volume for Ollama models and data
