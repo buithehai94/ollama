@@ -7,8 +7,8 @@ WORKDIR /api
 # Install system dependencies (curl is required to install Ollama)
 RUN apt-get update && apt-get install -y curl
 
-# Copy Ollama installation script from the local machine to the container
-COPY ollama_install.sh /tmp/ollama_install.sh
+# Copy Ollama installation script from the local api folder to the container
+COPY api/ollama_install.sh /tmp/ollama_install.sh
 
 # Run the script to install Ollama
 RUN bash /tmp/ollama_install.sh
