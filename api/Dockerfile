@@ -7,17 +7,14 @@ WORKDIR /api
 # Install system dependencies (curl is required to install Ollama)
 RUN apt-get update && apt-get install -y curl
 
+# Install Ollama directly using the curl command
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
 # Copy the requirements file to the container
 COPY requirements.txt /api/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /api/requirements.txt
-
-# Copy the locally downloaded Ollama tar file into the container (if you manually downloaded it)
-COPY ./ollama-install.tar.gz /tmp/ollama-install.tar.gz
-
-# Extract the tar file to install Ollama
-RUN tar -xzvf /tmp/ollama-install.tar.gz -C /usr/local/
 
 # Copy the rest of the application files into the container
 COPY api /api
