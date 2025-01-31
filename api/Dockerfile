@@ -15,7 +15,7 @@ WORKDIR $APP_HOME
 # Copy the application files (the 'api' directory and other necessary files)
 COPY ./api ./api
 COPY ./requirements.txt ./
-COPY /api ./ollama_install.sh ./  # Copy ollama_install.sh to root of container
+COPY ./api/ollama_install.sh ./ 
 
 # Ensure ollama_install.sh is executable and run it
 RUN chmod +x ollama_install.sh && ./ollama_install.sh
