@@ -13,17 +13,14 @@ RUN apt-get update -y && apt-get install -y \
 ENV APP_HOME=/app
 WORKDIR $APP_HOME
 
-# Copy the application files (the 'api' directory and other necessary files)
-COPY ./api ./api   
-
-# Copy the install script from the api folder
-COPY ./api/ollama_install.sh ./ 
-
-# Copy requirements.txt from the root folder (since it's outside the 'api' folder)
+# Copy the application files (the api.py, requirements.txt, etc.)
+COPY ./api/api.py ./api/api.py
+COPY ./api/ollama_install.sh ./api/ollama_install.sh
 COPY ./requirements.txt ./requirements.txt
+COPY ./wait-for-it.sh ./wait-for-it.sh
 
 # Ensure ollama_install.sh is executable and run it
-RUN chmod +x ./ollama_install.sh && ./ollama_install.sh
+RUN chmod +x ./api/ollama_install.sh && ./api/ollama_install.sh
 
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r ./requirements.txt
