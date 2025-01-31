@@ -6,26 +6,30 @@ services:
     container_name: ollama
     ports:
       - "11434:11434"  # Exposing Ollama API port
-    command: ["ollama", "run"]  # Start Ollama with the correct command
     volumes:
       - ollama_data:/root/.ollama  # Persist model data if needed
 
   fastapi:
     build:
-      context: ./api  # Build the FastAPI image from the Dockerfile in the 'api' folder
+      context: ./api  # Build FastAPI image from the Dockerfile inside 'api' folder
     container_name: fastapi
     ports:
-      - "8000:8000"  # Exposing FastAPI app on port 8000
+      - "8000:8000"  # Expose FastAPI app on port 8000
     depends_on:
       - ollama  # Ensure Ollama is running before starting FastAPI
     environment:
       - OLLAMA_API_URL=http://ollama:11434/api/generate  # Use Ollama service's internal Docker network address
     volumes:
-      - .:/api  # Mount the current directory to `/api` inside the container
-      - ./wait-for-it.sh:/wait-for-it.sh  # Ensure the wait-for-it.sh script is accessible
-    entrypoint: ["/wait-for-it.sh", "ollama:11434", "--", "uvicorn", "api.api:app", "--host", "0.0.0.0", "--port", "8000"]
+      - ./api:/api  # Only mount 'api/' directory into the container
+      - ./wait-for-it.sh:/wait-for-it.sh  # Ensure 'wait-for-it.sh' is accessible
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        chmod +x /wait-for-it.sh
+        /wait-for-it.sh ollama:11434 -- uvicorn api:app --host 0.0.0.0 --port 8000
     expose:
-      - "5005"  # Expose the port 5005 from FastAPI container (in case you want to link it to other services)
+      - "5005"  # Expose additional port if needed
 
 volumes:
   ollama_data:  # Persistent volume for Ollama models and data
