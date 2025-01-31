@@ -12,7 +12,7 @@ ENV APP_HOME=/api
 WORKDIR $APP_HOME
 
 # Copy application files
-COPY . .  # Copy everything inside `api/`
+COPY . . 
 
 # Ensure ollama_install.sh is executable and run it
 RUN chmod +x ollama_install.sh && ./ollama_install.sh
