@@ -1,26 +1,22 @@
-# Use an official Python image
-FROM python:3.10
+FROM python:3.11-slim AS base
 
-# Set the working directory inside the container
-WORKDIR /api
+# Install necessary dependencies (you can add more if needed)
+RUN apt-get update -y && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install system dependencies (curl is required to install Ollama)
-RUN apt-get update && apt-get install -y curl
+# Set environment variable for the app directory
+ENV APP_HOME=/api
+WORKDIR $APP_HOME
 
-# Install Ollama directly using the curl command
-RUN curl -fsSL https://ollama.com/install.sh | sh
+# Copy the application files (both the 'api' folder and other necessary files)
+COPY ./api ./api
+COPY ./requirements.txt ./
 
-# Copy the requirements file to the container
-COPY requirements.txt /api/
+# Install Python dependencies from requirements.txt
+RUN pip install -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r /api/requirements.txt
-
-# Copy the rest of the application files into the container
-COPY api /api
-
-# Expose the FastAPI default port
-EXPOSE 8000
-
-# Command to run FastAPI with Uvicorn, but also pull the model first
-CMD ["sh", "-c", "ollama pull llama && uvicorn api:app --host 0.0.0.0 --port 8000"]
+# Run the app with Uvicorn
+CMD exec uvicorn api.api:app --host '0.0.0.0' --port 5005
