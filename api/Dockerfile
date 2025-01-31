@@ -4,17 +4,18 @@ FROM python:3.10
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy only the necessary files
-COPY requirements.txt .
+# Install Ollama and other dependencies
+RUN curl -sSL https://ollama.com/install | bash
 
-# Install dependencies
+# Install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application files
+# Copy the application files
 COPY . .
 
 # Expose the FastAPI default port
 EXPOSE 8000
 
-# Command to run FastAPI with Uvicorn
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run Ollama and FastAPI in the same container
+CMD /bin/bash -c "ollama pull mistral && ollama run mistral && uvicorn api:app --host 0.0.0.0 --port 8000"
