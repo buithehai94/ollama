@@ -14,7 +14,7 @@ ENV APP_HOME=/api
 WORKDIR $APP_HOME
 
 # Copy the application files (the 'api' directory and other necessary files)
-COPY ./api ./api  # 'api' is the current directory, copy it to /api in the container
+COPY ./api ./api   
 
 # Copy the install script from the api folder
 COPY ./api/ollama_install.sh ./ 
