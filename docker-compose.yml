@@ -12,7 +12,7 @@ services:
 
   fastapi:
     build:
-      context: .  # Build the FastAPI image from the Dockerfile in the current directory
+      context: ./api  # Build the FastAPI image from the Dockerfile in the 'api' folder
     container_name: fastapi
     ports:
       - "8000:8000"  # Exposing FastAPI app on port 8000
