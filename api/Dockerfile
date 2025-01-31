@@ -18,7 +18,7 @@ COPY ./api ./api
 COPY ./ollama_install.sh ./
 
 # Ensure ollama_install.sh is executable and run it
-RUN chmod +x /ollama_install.sh && /ollama_install.sh
+RUN chmod +x /api/ollama_install.sh && /api/ollama_install.sh  # Adjust the path to match the working directory
 
 # Install Python dependencies from requirements.txt
 COPY ./requirements.txt ./
