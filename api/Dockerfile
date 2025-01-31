@@ -1,6 +1,7 @@
+# Use Python 3.11 slim image as the base image
 FROM python:3.11-slim AS base
 
-# Install necessary dependencies
+# Install necessary dependencies (build tools and PostgreSQL client)
 RUN apt-get update -y && apt-get install -y \
     build-essential \
     libpq-dev \
@@ -11,15 +12,18 @@ RUN apt-get update -y && apt-get install -y \
 ENV APP_HOME=/api
 WORKDIR $APP_HOME
 
-# Copy the application files (both the 'api' folder and other necessary files)
+# Copy the application files (the 'api' directory and other necessary files)
 COPY ./api ./api
 COPY ./requirements.txt ./
 
 # Install Python dependencies from requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Ensure uvicorn is available globally
-RUN pip install uvicorn[standard]
+# Install Uvicorn with standard extras (for production use)
+RUN pip install --no-cache-dir uvicorn[standard]
 
-# Run the app with Uvicorn
+# Expose port 8000 to be accessed from outside the container
+EXPOSE 8000
+
+# Run the FastAPI app with Uvicorn
 CMD ["uvicorn", "api.api:app", "--host", "0.0.0.0", "--port", "8000"]
