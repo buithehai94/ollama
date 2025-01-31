@@ -1,5 +1,10 @@
 import requests
 from fastapi import FastAPI, Response, HTTPException
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -9,20 +14,20 @@ def home():
 
 @app.get('/ask')
 def ask(prompt: str):
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
+        
     try:
-        # Sending the prompt to the Ollama API
         res = requests.post('http://ollama:11434/api/generate', json={
             "prompt": prompt,
             "stream": False,
             "model": "llama3"
-        })
+        }, timeout=10)  # Timeout set to 10 seconds
         
-        # Check if the request was successful
         res.raise_for_status()  # This will raise an exception for HTTP errors
 
-        return Response(content=res.text, media_type="application/json")
+        return Response(content=res.text, media_type="application/json", status_code=res.status_code)
 
     except requests.exceptions.RequestException as e:
-        # Log the error (you can use a logging library here)
-        print(f"Error communicating with Ollama API: {e}")
+        logger.error(f"Error communicating with Ollama API: {e}")
         raise HTTPException(status_code=500, detail="Failed to communicate with the Ollama API.")
