@@ -28,7 +28,7 @@ require() {
 }
 
 # Check for required tools
-REQUIRED_TOOLS="curl tar"
+REQUIRED_TOOLS="curl tar file"
 MISSING_TOOLS=$(require $REQUIRED_TOOLS)
 if [ -n "$MISSING_TOOLS" ]; then
     error "Missing required tools:$MISSING_TOOLS. Please install them and try again."
