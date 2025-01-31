@@ -17,7 +17,7 @@ WORKDIR $APP_HOME
 COPY ./api ./api  # 'api' is the current directory, copy it to /api in the container
 
 # Copy the install script from the api folder
-COPY ./api/ollama_install.sh ./  # Assuming 'ollama_install.sh' is inside the 'api' folder
+COPY ./api/ollama_install.sh ./ 
 
 # Copy requirements.txt from the root folder (since it's outside the 'api' folder)
 COPY ../requirements.txt ./requirements.txt
