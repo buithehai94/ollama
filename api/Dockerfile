@@ -5,9 +5,9 @@ FROM python:3.11-slim AS base
 RUN apt-get update -y && apt-get install -y \
     build-essential \
     libpq-dev \
-    curl \  # ✅ Add curl to ensure ollama_install.sh works
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    curl && \  # ✅ No trailing backslash after last item
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set environment variable for the app directory
 ENV APP_HOME=/api
