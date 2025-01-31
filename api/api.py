@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 import subprocess
+import os
 
 app = FastAPI()
-
-# URL for Ollama API (not needed in this case)
-# OLLAMA_API_URL = "http://127.0.0.1:11434/v1/chat/completions"  
 
 @app.get("/")
 async def root():
