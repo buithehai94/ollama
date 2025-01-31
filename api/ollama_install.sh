@@ -48,7 +48,7 @@ OLLAMA_URL="https://ollama.com/download/ollama-$ARCH.tar.gz"
 curl -L $OLLAMA_URL -o $TEMP_DIR/ollama.tar.gz
 
 status "Installing Ollama..."
-tar -xzf $TEMP_DIR/ollama.tar.gz -C /usr/local/bin
+tar -xzf $TEMP_DIR/ollama.tar.gz -C /usr/local/bin || error "Failed to extract Ollama. The file might not be in gzip format."
 
 status "Ollama installation complete."
 ollama --version
