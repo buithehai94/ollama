@@ -8,7 +8,7 @@ services:
     volumes:
       - .:/code
       - ./ollama/ollama:/root/.ollama
-      - ./start-ollama.sh:/start-ollama.sh
+      - ./start-ollama.sh:/start-ollama.sh:ro
     container_name: ollama
     restart: always
     networks:
@@ -19,12 +19,11 @@ services:
       retries: 10
       start_period: 120s
       timeout: 10s
-    entrypoint: /bin/sh
-    command: /start-ollama.sh
+    command: ["sh", "-c", "/start-ollama.sh && ollama serve"]
     
   fastapi:
     build:
-      context: .              # Set build context to the repository root
+      context: .  # Set build context to the repository root
       dockerfile: api/Dockerfile  # Specify the Dockerfile location relative to the context
     container_name: fastapi
     ports:
@@ -34,7 +33,7 @@ services:
     networks:
       - ollama-docker
     environment:
-      - OLLAMA_API_URL=http://ollama:11434/api/generate  # Use Ollama container name
+      - OLLAMA_API_URL=http://ollama:11434/  # Use correct API URL
 
 networks:
   ollama-docker:
