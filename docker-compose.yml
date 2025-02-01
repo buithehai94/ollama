@@ -3,13 +3,12 @@ version: '3.8'
 services:
   ollama:
     image: ollama/ollama:latest
+    container_name: ollama
     ports:
       - "11434:11434"  # Expose Ollama API on port 11434
     volumes:
       - .:/code
       - ./ollama/ollama:/root/.ollama
-      - ./start-ollama.sh:/start-ollama.sh:ro
-    container_name: ollama
     restart: always
     networks:
       - ollama-docker
@@ -19,8 +18,7 @@ services:
       retries: 10
       start_period: 120s
       timeout: 10s
-    command: ["sh", "-c", "/start-ollama.sh && ollama serve"]
-    
+
   fastapi:
     build:
       context: .  # Set build context to the repository root
@@ -29,11 +27,16 @@ services:
     ports:
       - "8000:8000"  # Expose FastAPI app on port 8000
     depends_on:
-      - ollama  # Ensure Ollama is running before FastAPI starts
+      ollama:
+        condition: service_healthy  # Wait for Ollama to be ready
     networks:
       - ollama-docker
     environment:
       - OLLAMA_API_URL=http://ollama:11434/  # Use correct API URL
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ./wait-for-it.sh ollama:11434 --timeout=60 --strict -- uvicorn main:app --host 0.0.0.0 --port 8000
 
 networks:
   ollama-docker:
