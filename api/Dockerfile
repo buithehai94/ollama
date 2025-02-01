@@ -11,22 +11,27 @@ RUN apt-get update -y && apt-get install -y \
 
 # Set environment variable for the app directory
 ENV APP_HOME=/app
+
+# Create the app directory and set it as the working directory
 WORKDIR $APP_HOME
 
 # Copy the application files (the 'api' directory and other necessary files)
-COPY ./api ./api   
+COPY ./api /app/
 
 # Copy the install script from the api folder
-COPY ./api/ollama_install.sh ./ 
+COPY ./api/ollama_install.sh /app/ollama_install.sh
 
-# Copy requirements.txt from the root folder (since it's outside the 'api' folder)
-COPY ./requirements.txt ./requirements.txt
+# Copy requirements.txt from the root folder
+COPY ./requirements.txt /app/requirements.txt
 
 # Ensure ollama_install.sh is executable and run it
-RUN chmod +x ./ollama_install.sh && ./ollama_install.sh
+RUN chmod +x /app/ollama_install.sh && /app/ollama_install.sh
 
 # Install Python dependencies from requirements.txt
-RUN pip install --no-cache-dir -r ./requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Set the working directory to /app/api
+WORKDIR /app/api
 
 # Expose the port the app runs on
 EXPOSE 8000
