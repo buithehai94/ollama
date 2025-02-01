@@ -5,13 +5,16 @@ FROM ubuntu:22.04
 WORKDIR /app
 
 # Install necessary dependencies
-RUN apt update && apt install -y curl python3 python3-pip
+RUN apt update && \
+    apt install -y curl python3 python3-pip && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Ollama
 RUN curl -fsSL https://ollama.ai/install.sh | sh
 
-# Make sure the Ollama binary is executable
-RUN chmod +x /root/.ollama/bin/ollama
+# Ensure the Ollama binary is executable
+RUN chmod 755 /root/.ollama/bin/ollama && \
+    chown root:root /root/.ollama/bin/ollama
 
 # Set the PATH to include Ollama binary location
 ENV PATH="/root/.ollama/bin:$PATH"
