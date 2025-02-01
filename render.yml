@@ -4,5 +4,5 @@ services:
     env: docker
     plan: starter
     dockerfilePath: Dockerfile
-    port: 11434
+    port: 8000
     instances: 1
