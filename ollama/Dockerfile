@@ -2,7 +2,7 @@
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /ollama
 
 # Install necessary dependencies
 RUN apt-get update && \
@@ -15,9 +15,6 @@ RUN apt-get update && \
 
 # Install vLLM using pip
 RUN pip install --no-cache-dir vllm
-
-# Set environment variables (replace <secret> with your Hugging Face token)
-ENV HUGGING_FACE_HUB_TOKEN=<secret>
 
 # Expose the port the app will run on
 EXPOSE 8000
