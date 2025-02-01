@@ -1,24 +1,29 @@
-# Use Ubuntu as the base image
-FROM ubuntu:22.04
+# Use Python 3.11 slim image as the base image
+FROM python:3.11-slim AS base
 
-# Set the working directory
-WORKDIR /app
+# Install necessary dependencies (build tools, curl, and file)
+RUN apt-get update -y && apt-get install -y \
+    build-essential \
+    curl \
+    file \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install necessary dependencies
-RUN apt update && apt install -y curl python3 python3-pip
+# Set environment variable for the app directory
+ENV APP_HOME=/app
+WORKDIR $APP_HOME
 
-# Install Ollama
-RUN curl -fsSL https://ollama.com/install.sh | bash
+# Copy the application files (the 'api' directory and other necessary files)
+COPY ./ollama ./ollama 
 
-# Manually add Ollama binary to the PATH environment variable
-ENV PATH="/root/.ollama/bin:$PATH"
+# Copy the install script from the api folder
+COPY ./ollama/ollama_install.sh ./ 
 
-# Copy your requirements.txt and install dependencies (if needed)
-COPY ../requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy requirements.txt from the root folder (since it's outside the 'api' folder)
+COPY ./requirements.txt ./requirements.txt
 
-# Expose the Ollama API port
-EXPOSE 11434
+# Ensure ollama_install.sh is executable and run it
+RUN chmod +x ./ollama_install.sh && ./ollama_install.sh
 
-# Start Ollama (with absolute path to Ollama if necessary)
-CMD ["/root/.ollama/bin/ollama", "serve"]
+# Install Python dependencies from requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
