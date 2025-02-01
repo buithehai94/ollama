@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 # Set the working directory
 WORKDIR /app
@@ -8,14 +8,18 @@ WORKDIR /app
 RUN apt update && apt install -y curl python3 python3-pip
 
 # Install Ollama
-RUN curl -fsSL https://ollama.com/install.sh | bash
+RUN curl -fsSL https://ollama.com/install.sh | bash && \
+    echo 'export PATH=$PATH:/root/.ollama/bin' >> ~/.bashrc
 
-# Copy and install Python dependencies (if needed)
+# Ensure Ollama is in PATH
+ENV PATH="/root/.ollama/bin:${PATH}"
+
+# Copy requirements if needed
 COPY ../requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose Ollama's default API port
+# Expose the Ollama API port
 EXPOSE 11434
 
 # Start Ollama
-CMD ["ollama", "serve"]
+CMD ["bash", "-c", "source ~/.bashrc && ollama serve"]
