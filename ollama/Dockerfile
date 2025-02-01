@@ -8,4 +8,16 @@ WORKDIR /app
 RUN apt update && apt install -y curl python3 python3-pip
 
 # Install Ollama
-RUN curl https://ollama.ai/install.sh | sh
+RUN curl -fsSL https://ollama.ai/install.sh | sh
+
+# Make sure the Ollama binary is executable
+RUN chmod +x /root/.ollama/bin/ollama
+
+# Set the PATH to include Ollama binary location
+ENV PATH="/root/.ollama/bin:$PATH"
+
+# Expose the Ollama API port (or the port your app is listening on)
+EXPOSE 11434
+
+# Start Ollama (with the full path to the binary)
+CMD ["/root/.ollama/bin/ollama", "serve"]
