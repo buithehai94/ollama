@@ -1,26 +1,26 @@
-# Use Ubuntu as the base image
-FROM ubuntu:22.04
+# Use a base image that supports CUDA and Python
+FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04
 
 # Set the working directory
 WORKDIR /app
 
 # Install necessary dependencies
-RUN apt update && \
-    apt install -y curl python3 python3-pip && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    python3 \
+    python3-pip \
+    python3-setuptools \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Ollama
-RUN curl -fsSL https://ollama.ai/install.sh | sh
+# Install vLLM using pip
+RUN pip install --no-cache-dir vllm
 
-# Ensure the Ollama binary is executable
-RUN chmod 755 /root/.ollama/bin/ollama && \
-    chown root:root /root/.ollama/bin/ollama
+# Set environment variables (replace <secret> with your Hugging Face token)
+ENV HUGGING_FACE_HUB_TOKEN=<secret>
 
-# Set the PATH to include Ollama binary location
-ENV PATH="/root/.ollama/bin:$PATH"
+# Expose the port the app will run on
+EXPOSE 8000
 
-# Expose the Ollama API port (or the port your app is listening on)
-EXPOSE 11434
-
-# Start Ollama (with the full path to the binary)
-CMD ["/root/.ollama/bin/ollama", "serve"]
+# Command to serve the model using vLLM
+CMD ["vllm", "serve", "deepseek-ai/DeepSeek-R1"]
