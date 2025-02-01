@@ -3,7 +3,9 @@ services:
     type: web
     runtime: docker
     region: oregon
-    plan: starter
+    plan: starter  # Use a higher plan if needed
+    dockerContext: ollama
+    dockerfilePath: ollama/Dockerfile
     envVars:
       - key: OLLAMA_PORT
         value: "11434"
