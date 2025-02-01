@@ -11,7 +11,7 @@ services:
 
   fastapi:
     build:
-      context: .            # Set build context to the repository root
+      context: .              # Set build context to the repository root
       dockerfile: api/Dockerfile  # Specify the Dockerfile location relative to the context
     container_name: fastapi
     ports:
@@ -21,13 +21,13 @@ services:
     environment:
       - OLLAMA_API_URL=http://ollama:11434/api/generate  # Use Ollama service's internal Docker network address
     volumes:
-      - ./api:/app  # Mount the 'api/' directory into the container
+      - ./api:/api  # Mount the 'api/' directory into the container at '/api'
       - ./wait-for-it.sh:/wait-for-it.sh  # Ensure 'wait-for-it.sh' is accessible
     entrypoint:
       - /bin/sh
       - -c
       - |
-        chmod +x /wait-for-it.sh && /wait-for-it.sh ollama:11434 -- uvicorn api:app --host 0.0.0.0 --port 8000
+        chmod +x /wait-for-it.sh && /wait-for-it.sh ollama:11434 -- uvicorn api.api:app --host 0.0.0.0 --port 8000
 
 volumes:
   ollama_data:
