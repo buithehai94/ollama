@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Fetch Ollama API URL from environment variables (use default if not set)
-OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", "http://ollama:11434/generate")
+OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", "https://ollama-0hf8.onrender.com/generate")
 
 app = FastAPI()
 
