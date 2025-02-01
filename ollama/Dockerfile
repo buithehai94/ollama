@@ -1,31 +1,27 @@
-# Use Python 3.11 slim image as the base image
-FROM python:3.11-slim AS base
+# Use Ubuntu as the base image
+FROM ubuntu:22.04
 
-# Set environment variables
-ENV APP_HOME=/app
-WORKDIR $APP_HOME
+# Set the working directory
+WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    file \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Install necessary dependencies
+RUN apt update && apt install -y curl python3 python3-pip
 
-# Copy the requirements.txt first to leverage Docker cache
-COPY ./requirements.txt .
+# Install Ollama
+RUN curl -fsSL https://ollama.com/install.sh | bash
 
-# Install Python dependencies
+# Manually add Ollama binary to the PATH environment variable
+ENV PATH="/root/.ollama/bin:$PATH"
+
+# Make sure the Ollama binary is executable
+RUN chmod +x /root/.ollama/bin/ollama
+
+# Copy your requirements.txt and install dependencies (if needed)
+COPY ../requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the Ollama application files (ollama directory)
-COPY ./ollama ./ollama
+# Expose the Ollama API port
+EXPOSE 11434
 
-# Create a non-root user for security (optional)
-RUN useradd -m appuser && chown -R appuser:appuser $APP_HOME
-USER appuser
-
-# Default command (can be adjusted to your needs)
-# In this case, just launching a shell so you can interact with the container
-CMD ["bash"]
+# Start Ollama (with absolute path to Ollama)
+CMD ["/root/.ollama/bin/ollama", "serve"]
