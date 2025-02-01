@@ -19,7 +19,7 @@ services:
     depends_on:
       - ollama  # Ensure Ollama is running before starting FastAPI
     environment:
-      - OLLAMA_API_URL=http://ollama:11434/api/generate  # Use Ollama service's internal Docker network address
+      - OLLAMA_API_URL=http://host.docker.internal:11434/api/generate  # Use host's IP for the API
     volumes:
       - ./api:/api  # Mount the 'api/' directory into the container at '/api'
       - ./wait-for-it.sh:/wait-for-it.sh  # Ensure 'wait-for-it.sh' is accessible
