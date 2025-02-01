@@ -1,7 +1,7 @@
 # Use Python 3.11 slim image as the base image
 FROM python:3.11-slim AS base
 
-# Install necessary dependencies (build tools, curl, file)
+# Install necessary dependencies
 RUN apt-get update -y && apt-get install -y \
     build-essential \
     curl \
