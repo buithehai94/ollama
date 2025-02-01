@@ -13,22 +13,19 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements first to leverage Docker layer caching
+# Copy the requirements.txt first to leverage Docker cache
 COPY ./requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application files (ollama directory and scripts)
+# Copy the Ollama application files (ollama directory)
 COPY ./ollama ./ollama
-COPY ./ollama/ollama_install.sh ./
-
-# Ensure ollama_install.sh is executable and run it
-RUN chmod +x ollama_install.sh && ./ollama_install.sh
 
 # Create a non-root user for security (optional)
 RUN useradd -m appuser && chown -R appuser:appuser $APP_HOME
 USER appuser
 
-# Default command (modify as needed)
-CMD ["python", "-m", "your_main_script"]
+# Default command (can be adjusted to your needs)
+# In this case, just launching a shell so you can interact with the container
+CMD ["bash"]
