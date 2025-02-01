@@ -1,13 +1,8 @@
 services:
-  - name: ollama-service
-    type: web
-    runtime: docker
-    region: oregon
-    plan: starter  # Use a higher plan if needed
-    dockerContext: ollama
-    dockerfilePath: ollama/Dockerfile
-    envVars:
-      - key: OLLAMA_PORT
-        value: "11434"
-    healthCheckPath: "/"
-    autoDeploy: true
+  - type: web
+    name: ollama-server
+    env: docker
+    plan: starter
+    dockerfilePath: Dockerfile
+    port: 11434
+    instances: 1
