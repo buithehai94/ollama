@@ -1,24 +1,9 @@
-# Use a base image with Python (CPU version)
-FROM python:3.8-slim
+FROM ollama/ollama
 
-# Set the working directory
-WORKDIR /ollama
+COPY ./run_ollama.sh /tmp/run_ollama.sh
 
-# Install necessary dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    curl \
-    python3-setuptools \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /tmp
 
-# Install vLLM using pip
-RUN pip install --no-cache-dir vllm
+RUN chmod +x run_ollama.sh
 
-# Verify vLLM installation
-RUN python3 -m pip show vllm
-
-# Expose the port the app will run on
-EXPOSE 8000
-
-# Command to serve the model using vLLM
-CMD ["vllm", "serve", "deepseek-ai/DeepSeek-R1"]
+EXPOSE 11434
