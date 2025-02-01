@@ -1,0 +1,11 @@
+services:
+  - name: ollama-service
+    type: web
+    runtime: docker
+    region: oregon
+    plan: starter
+    envVars:
+      - key: OLLAMA_PORT
+        value: "11434"
+    healthCheckPath: "/"
+    autoDeploy: true
