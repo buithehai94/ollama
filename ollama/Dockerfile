@@ -5,7 +5,7 @@ FROM ollama/ollama
 WORKDIR /app
 
 # Copy requirements.txt from the root directory
-COPY ../requirements.txt /app/requirements.txt
+COPY /requirements.txt /app/requirements.txt
 
 # Install dependencies
 RUN apt-get update && apt-get install -y python3-pip && \
@@ -18,5 +18,5 @@ RUN chmod +x /tmp/run_ollama.sh
 # Expose Ollama API port
 EXPOSE 11434
 
-# Start Ollama with DeepSeek-R1
-ENTRYPOINT ["/tmp/run_ollama.sh"]
+# Start Ollama + DeepSeek-R1
+CMD ["/tmp/run_ollama.sh"]
