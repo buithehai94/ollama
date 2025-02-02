@@ -13,7 +13,7 @@ ENV OLLAMA_DEBUG false
 ENV OLLAMA_KEEP_ALIVE -1 
 
 # Store the model weights in the container image
-ENV MODEL gemma2:9b
+ENV MODEL deepseek-r1:1.5b
 RUN ollama serve & sleep 5 && ollama pull $MODEL 
 
 # Start Ollama
