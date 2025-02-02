@@ -1,11 +1,7 @@
 #!/bin/bash
 
-echo "Starting Ollama server..."
-ollama serve &
-ollama run llama3
+echo "Pulling DeepSeek-R1 (1.5B) model..."
+ollama pull deepseek-r1:1.5b
 
-
-echo "Waiting for Ollama server to be active..."
-while [ "$(ollama list | grep 'NAME')" == "" ]; do
-  sleep 1
-done
+echo "Starting Ollama with DeepSeek-R1..."
+ollama serve
