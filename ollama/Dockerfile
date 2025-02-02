@@ -19,4 +19,4 @@ RUN chmod +x /run_ollama.sh
 EXPOSE 11434
 
 # Start Ollama + DeepSeek-R1
-CMD ["/run_ollama.sh"]
+CMD ["ollama/run_ollama.sh"]
