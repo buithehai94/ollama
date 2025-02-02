@@ -1,18 +1,15 @@
-ollama:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.ollama
-    image: ollama
-    container_name: ollama
-    env_file: env
-    entrypoint: /tmp/run_ollama.sh
-    ports:
-      - 11434:11434
-    volumes:
-      - .:/app/
-      - ./ollama/ollama:/root/.ollama
-    pull_policy: always
-    tty: true
-    restart: always
-    networks:
-      - net
+services:
+  - name: ollama
+    type: private  # Change to "web" for public access
+    plan: starter
+    env: docker
+    buildCommand: ""  # No build command needed for Docker
+    dockerfilePath: ollama/Dockerfile  # Point to the correct Dockerfile
+    envVars:
+      - key: OLLAMA_HOST
+        value: "0.0.0.0:11434"
+    autoDeploy: true
+    disk:
+      name: ollama-persistent
+      mountPath: /root/.ollama
+      sizeGB: 100  # Adjust if needed
