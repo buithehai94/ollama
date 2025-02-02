@@ -1,20 +1,15 @@
-FROM ollama/ollama:0.3.6
+# Use Ollama base image
+FROM ollama/ollama
 
-# Listen on all interfaces, port 8080
-ENV OLLAMA_HOST 0.0.0.0:8080
+# Set working directory
+WORKDIR /app
 
-# Store model weight files in /models
-ENV OLLAMA_MODELS /models
+# Copy startup script
+COPY run_ollama.sh /tmp/run_ollama.sh
+RUN chmod +x /tmp/run_ollama.sh
 
-# Reduce logging verbosity
-ENV OLLAMA_DEBUG false
+# Expose Ollama API port
+EXPOSE 11434
 
-# Never unload model weights from the GPU
-ENV OLLAMA_KEEP_ALIVE -1 
-
-# Store the model weights in the container image
-ENV MODEL deepseek-r1:1.5b
-RUN ollama serve & sleep 5 && ollama pull $MODEL 
-
-# Start Ollama
-ENTRYPOINT ["ollama", "serve"]
+# Start Ollama with DeepSeek-R1
+ENTRYPOINT ["/tmp/run_ollama.sh"]
