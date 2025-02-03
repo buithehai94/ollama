@@ -17,7 +17,7 @@ RUN ollama pull deepseek-r1:1.5b
 EXPOSE 11434  
 
 # Copy files
-COPY entrypoint.sh /entrypoint.sh
+COPY ollama/entrypoint.sh /entrypoint.sh
 COPY requirements.txt /requirements.txt
 
 # Set permissions for entrypoint script
