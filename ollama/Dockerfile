@@ -1,44 +1,14 @@
-# Stage 1: Build the binary
-FROM golang:alpine AS builder
-
-# Install required dependencies
-RUN apk add --no-cache git build-base cmake bash
-
-# Set the working directory within the container
-WORKDIR /app
-
-# Clone the source code from the GitHub repository
-RUN git clone https://github.com/jmorganca/ollama.git .
-
-# Build the binary with static linking
-RUN go generate ./... \
-    && go build -ldflags '-linkmode external -extldflags "-static"' -o .
-
-# Stage 2: Create the final image
-FROM alpine
-
-ENV OLLAMA_HOST "0.0.0.0"
-
-# Install required runtime dependencies
-RUN apk add --no-cache libstdc++ curl
-
-# NOTE: UNCOMMENT THIS IF YOU'RE CHANGING THE MODELFILE
-# COPY Modelfile /Modelfile
-
-# Copy the custom entry point script into the container
-COPY entrypoint.sh /entrypoint.sh
-
-# Make the script executable
-RUN chmod +x /entrypoint.sh
-
-# Create a non-root user
-ARG USER=ollama
-ARG GROUP=ollama
-RUN addgroup $GROUP && adduser -D -G $GROUP $USER
-
-# Copy the binary from the builder stage
-COPY --from=builder /app/ollama /bin/ollama
-
-USER $USER:$GROUP
-
-ENTRYPOINT ["/entrypoint.sh"]
+# Use an Ubuntu base image
+FROM ubuntu:22.04  
+# Set environment variables to prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive  
+# Install dependencies
+RUN apt update && apt install -y curl  
+# Install Ollama
+RUN curl -fsSL https://ollama.com/install.sh | sh  
+# Download and preload the Deepseek-r1 8B model
+RUN ollama pull deepseek-r1:8b  
+# Expose the port for API access (optional)
+EXPOSE 11434  
+# Run Ollama as the default process
+CMD ["ollama", "serve"]
