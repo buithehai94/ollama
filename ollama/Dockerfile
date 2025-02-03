@@ -1,22 +1,44 @@
-# Use Ollama base image
-FROM ollama/ollama
+# Stage 1: Build the binary
+FROM golang:alpine AS builder
 
-# Set working directory to root (optional, or you can use /root as well)
-WORKDIR /
+# Install required dependencies
+RUN apk add --no-cache git build-base cmake bash
 
-# Copy requirements.txt from the root directory
-COPY requirements.txt /requirements.txt
+# Set the working directory within the container
+WORKDIR /app
 
-# Install dependencies
-RUN apt-get update && apt-get install -y python3-pip && \
-    pip3 install --no-cache-dir -r /requirements.txt
+# Clone the source code from the GitHub repository
+RUN git clone https://github.com/jmorganca/ollama.git .
 
-# Copy run_ollama.sh script from ollama folder to the root of the container
-COPY ollama/run_ollama.sh /run_ollama.sh
-RUN chmod +x /run_ollama.sh
+# Build the binary with static linking
+RUN go generate ./... \
+    && go build -ldflags '-linkmode external -extldflags "-static"' -o .
 
-# Expose Ollama API port
-EXPOSE 11434
+# Stage 2: Create the final image
+FROM alpine
 
-# Start Ollama + DeepSeek-R1
-CMD ["/run_ollama.sh"]
+ENV OLLAMA_HOST "0.0.0.0"
+
+# Install required runtime dependencies
+RUN apk add --no-cache libstdc++ curl
+
+# NOTE: UNCOMMENT THIS IF YOU'RE CHANGING THE MODELFILE
+# COPY Modelfile /Modelfile
+
+# Copy the custom entry point script into the container
+COPY entrypoint.sh /entrypoint.sh
+
+# Make the script executable
+RUN chmod +x /entrypoint.sh
+
+# Create a non-root user
+ARG USER=ollama
+ARG GROUP=ollama
+RUN addgroup $GROUP && adduser -D -G $GROUP $USER
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/ollama /bin/ollama
+
+USER $USER:$GROUP
+
+ENTRYPOINT ["/entrypoint.sh"]
