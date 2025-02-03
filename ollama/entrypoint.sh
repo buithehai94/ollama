@@ -1,12 +1,10 @@
+#!/bin/bash
 
-#!/bin/sh
+# Start Ollama in the background
+ollama serve &
 
-./bin/ollama serve &
-
+# Wait for Ollama to start
 sleep 5
 
-curl -X POST http://localhost:11434/api/pull -d '{"name": "llama3"}'
-
-sleep 10
-
+# Keep the container running
 tail -f /dev/null
