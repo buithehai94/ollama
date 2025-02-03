@@ -1,15 +1,7 @@
-services:
-  - name: ollama-deepseek
-    type: private  # Change to "web" if you want public access
-    plan: starter  # Use "pro" for better performance
-    env: docker
-    buildCommand: ""  # No need for extra build commands
-    dockerfilePath: ollama/Dockerfile  # Path to Dockerfile inside the ollama/ folder
-    envVars:
-      - key: OLLAMA_HOST
-        value: "0.0.0.0:11434"
-    autoDeploy: true
-    disk:
-      name: ollama-storage
-      mountPath: /root/.ollama  # Ensures DeepSeek-R1 persists
-      sizeGB: 10  # Increase if needed
+  - type: pserv
+    name: app-ollama
+    region: oregon
+    runtime: docker
+    dockerContext: ./ollama
+    dockerfilePath: ./ollama/Dockerfile
+    plan: starter
